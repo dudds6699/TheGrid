@@ -12,7 +12,7 @@
     <body>
         <script>
                 // create an new instance of a pixi stage
-                var stage = new PIXI.Stage(0x66FF99);
+                var container = new PIXI.Container();
              
                 // create a renderer instance.
                 var renderer = PIXI.autoDetectRenderer(400, 300);
@@ -35,7 +35,7 @@
                 bunny.position.x = 200;
                 bunny.position.y = 150;
              
-                stage.addChild(bunny);
+                container.addChild(bunny);
                 
                 function animate() {
              
@@ -43,7 +43,7 @@
              
                     bunny.rotation += 0.1;
                     // render the stage   
-                    renderer.render(stage);
+                    renderer.render(container);
                 }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
