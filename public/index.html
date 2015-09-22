@@ -36,22 +36,13 @@
             var state;
             var texture;
             var continueAn = true;
-            function setup(){
-                player1 = null;
-                //Capture the keyboard arrow keys
-                var left = keyboard(37),
-                    up = keyboard(38),
-                    right = keyboard(39),
-                    down = keyboard(40);
-                    
-                requestAnimationFrame( animate );
-                
-                // create a texture from an image path
-                texture = PIXI.Texture.fromImage("pics/bunny.png");
-                // create a new Sprite using the texture
-                player1 = new player(texture,resx / 2,resy / 2);
-                player1.setContainer(container);
-                
+            
+            //Capture the keyboard arrow keys
+            var left = keyboard(37),
+                up = keyboard(38),
+                right = keyboard(39),
+                down = keyboard(40);
+
                 //basic game logic
                 left.press = function(){
                     player1.left();
@@ -67,7 +58,22 @@
                 
                 down.press = function() {
                     player1.down();
-                }
+                }            
+            
+            
+            function setup(){
+
+                    
+                requestAnimationFrame( animate );
+                
+                // create a texture from an image path
+                texture = PIXI.Texture.fromImage("pics/bunny.png");
+                
+                // create a new Sprite using the texture
+                player1 = new player(texture,resx / 2,resy / 2);
+                player1.setContainer(container);
+                
+
                 
                 //Set the game state
                 state = play;
@@ -76,22 +82,14 @@
             }
             
             function animate() {
-                var check = true;
-             
-             if(continueAn){
                 requestAnimationFrame( animate );
-                //bunny.rotation += 0.1;
-                // render the stage   
                 state();
-                
                 renderer.render(container);
-             }
-             
             }
                 
             function play(){
-                //Use the cat's velocity to make it move
                 player1.update(container);
+                //checks if the player crashes
                 var check = player1.crash(container, resx, resy)
                 if(check){
                     reset();
@@ -100,9 +98,10 @@
             }
             
             function reset(){
-                continueAn = false;
                 container.removeChildren();
                 console.log("called");
+                player1 = new player(texture,resx / 2,resy / 2);
+                player1.setContainer(container);
             }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
