@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="scripts/pixi.js"></script>
         <script src="scripts/keyboard.js"></script>
+        <script src="scripts/PlayerObj.js"></script>
     </head>
     <body>
         <script>
@@ -31,10 +32,12 @@
                 .add("pics/bunny.png")
                 .load(setup);
              
-            var bunny;
+            var player1;
             var state;
             var texture;
+            var continueAn = true;
             function setup(){
+                player1 = null;
                 //Capture the keyboard arrow keys
                 var left = keyboard(37),
                     up = keyboard(38),
@@ -46,70 +49,62 @@
                 // create a texture from an image path
                 texture = PIXI.Texture.fromImage("pics/bunny.png");
                 // create a new Sprite using the texture
-                bunny = new PIXI.Sprite(texture);
-             
-                // center the sprites anchor point
-                bunny.anchor.x = 0.5;
-                bunny.anchor.y = 0.5;
-                bunny.vx = 0;
-                bunny.vy = 0;
-                container.addChild(bunny);
-             
-                // move the sprite t the center of the screen
-                bunny.position.x = resx / 2;
-                bunny.position.y = resy / 2;
-                
+                player1 = new player(texture,resx / 2,resy / 2);
+                player1.setContainer(container);
                 
                 //basic game logic
                 left.press = function(){
-                    bunny.vx = -5;
-                    bunny.vy = 0;
+                    player1.left();
                 }
                 
                 up.press = function() {
-                    bunny.vx = 0;
-                    bunny.vy = -5;
+                    player1.up();
                 }
                 
                 right.press = function(){
-                    bunny.vx = 5;
-                    bunny.vy = 0;                    
+                    player1.right();                  
                 }
                 
                 down.press = function() {
-                    bunny.vx = 0;
-                    bunny.vy = 5;                    
+                    player1.down();
                 }
-             
-          
-                  //Set the game state
+                
+                //Set the game state
                 state = play;
                 
                 animate();
             }
             
             function animate() {
+                var check = true;
              
+             if(continueAn){
                 requestAnimationFrame( animate );
                 //bunny.rotation += 0.1;
                 // render the stage   
                 state();
                 
                 renderer.render(container);
+             }else{
+                 setup();
+             }
+             
             }
                 
             function play(){
                 //Use the cat's velocity to make it move
-                bunny2 = new PIXI.Sprite(texture);
-                // center the sprites anchor point
-                bunny2.anchor.x = 0.5;
-                bunny2.anchor.y = 0.5;
-                bunny2.position.x = bunny.x;
-                bunny2.position.y = bunny.y;
-                container.addChild(bunny2);
+                player1.update(container);
+                var check = player1.crash(container, resx, resy)
+                if(check){
+                    reset();
+                }
                 
-                bunny.x += bunny.vx;
-                bunny.y += bunny.vy;
+            }
+            
+            function reset(){
+                continueAn = false;
+                container.removeChildren();
+                console.log("called");
             }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
