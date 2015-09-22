@@ -8,43 +8,99 @@
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="scripts/pixi.js"></script>
+        <script src="scripts/keyboard.js"></script>
     </head>
     <body>
         <script>
-                // create an new instance of a pixi stage
-                var container = new PIXI.Container();
+            
+            var resx = 800;
+            var resy = 600;
+        
+            // create an new instance of a pixi stage
+            var container = new PIXI.Container();
+            var loader = PIXI.loader;
              
-                // create a renderer instance.
-                var renderer = PIXI.autoDetectRenderer(400, 300);
+            // create a renderer instance.
+            var renderer = PIXI.autoDetectRenderer(resx, resy);
              
-                // add the renderer view element to the DOM
-                document.body.appendChild(renderer.view);
+            // add the renderer view element to the DOM
+            document.body.appendChild(renderer.view);
              
+             
+            loader
+                .add("pics/bunny.png")
+                .load(setup);
+             
+            var bunny;
+            var state;
+            
+            function setup(){
+                //Capture the keyboard arrow keys
+                var left = keyboard(37),
+                    up = keyboard(38),
+                    right = keyboard(39),
+                    down = keyboard(40);
+                    
                 requestAnimationFrame( animate );
                 
                 // create a texture from an image path
                 var texture = PIXI.Texture.fromImage("pics/bunny.png");
                 // create a new Sprite using the texture
-                var bunny = new PIXI.Sprite(texture);
+                bunny = new PIXI.Sprite(texture);
              
                 // center the sprites anchor point
                 bunny.anchor.x = 0.5;
                 bunny.anchor.y = 0.5;
+                bunny.vx = 0;
+                bunny.vy = 0;
+                
+                //basic game logic
+                left.press = function(){
+                    bunny.vx = -5;
+                    bunny.vy = 0;
+                }
+                
+                up.press = function() {
+                    bunny.vx = 0;
+                    bunny.vy = -5;
+                }
+                
+                right.press = function(){
+                    bunny.vx = 5;
+                    bunny.vy = 0;                    
+                }
+                
+                down.press = function() {
+                    bunny.vx = 0;
+                    bunny.vy = 5;                    
+                }
              
                 // move the sprite t the center of the screen
-                bunny.position.x = 200;
-                bunny.position.y = 150;
+                bunny.position.x = resx / 2;
+                bunny.position.y = resy / 2;
              
                 container.addChild(bunny);
+                  //Set the game state
+                state = play;
                 
-                function animate() {
+                animate();
+            }
+            
+            function animate() {
              
-                    requestAnimationFrame( animate );
-             
-                    bunny.rotation += 0.1;
-                    // render the stage   
-                    renderer.render(container);
-                }
+                requestAnimationFrame( animate );
+                //bunny.rotation += 0.1;
+                // render the stage   
+                state();
+                
+                renderer.render(container);
+            }
+                
+            function play(){
+                //Use the cat's velocity to make it move
+                bunny.x += bunny.vx;
+                bunny.y += bunny.vy
+            }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
