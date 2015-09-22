@@ -33,7 +33,7 @@
              
             var bunny;
             var state;
-            
+            var texture;
             function setup(){
                 //Capture the keyboard arrow keys
                 var left = keyboard(37),
@@ -44,7 +44,7 @@
                 requestAnimationFrame( animate );
                 
                 // create a texture from an image path
-                var texture = PIXI.Texture.fromImage("pics/bunny.png");
+                texture = PIXI.Texture.fromImage("pics/bunny.png");
                 // create a new Sprite using the texture
                 bunny = new PIXI.Sprite(texture);
              
@@ -53,6 +53,12 @@
                 bunny.anchor.y = 0.5;
                 bunny.vx = 0;
                 bunny.vy = 0;
+                container.addChild(bunny);
+             
+                // move the sprite t the center of the screen
+                bunny.position.x = resx / 2;
+                bunny.position.y = resy / 2;
+                
                 
                 //basic game logic
                 left.press = function(){
@@ -75,11 +81,7 @@
                     bunny.vy = 5;                    
                 }
              
-                // move the sprite t the center of the screen
-                bunny.position.x = resx / 2;
-                bunny.position.y = resy / 2;
-             
-                container.addChild(bunny);
+          
                   //Set the game state
                 state = play;
                 
@@ -98,8 +100,16 @@
                 
             function play(){
                 //Use the cat's velocity to make it move
+                bunny2 = new PIXI.Sprite(texture);
+                // center the sprites anchor point
+                bunny2.anchor.x = 0.5;
+                bunny2.anchor.y = 0.5;
+                bunny2.position.x = bunny.x;
+                bunny2.position.y = bunny.y;
+                container.addChild(bunny2);
+                
                 bunny.x += bunny.vx;
-                bunny.y += bunny.vy
+                bunny.y += bunny.vy;
             }
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
