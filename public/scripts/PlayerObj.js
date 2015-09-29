@@ -8,6 +8,7 @@ function player(texture,startx, starty)
     this.vy = 0;
     this.obj.position.x = startx;
     this.obj.position.y = starty;
+    this.velocity = 2;
 }
 
 player.prototype.setContainer = function(container){
@@ -15,23 +16,23 @@ player.prototype.setContainer = function(container){
 };
 
 player.prototype.left = function(){
-    this.vx = -5;
+    this.vx = this.velocity * -1;
     this.vy = 0;
 };
 
 player.prototype.right = function(){
-    this.vx = 5;
+    this.vx = this.velocity;
     this.vy = 0;     
 };
 
 player.prototype.up = function(){
     this.vx = 0;
-    this.vy = -5;    
+    this.vy = this.velocity * -1;    
 };
 
 player.prototype.down = function(){
     this.vx = 0;
-    this.vy = 5;     
+    this.vy = this.velocity;     
 };
 
 player.prototype.update = function(container){

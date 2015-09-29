@@ -29,7 +29,8 @@
              
              
             loader
-                .add("pics/bunny.png")
+                .add("pics/player1.png")
+                .add("pics/player2.png")
                 .load(setup);
              
             var player1;
@@ -66,7 +67,7 @@
                 requestAnimationFrame( animate );
                 
                 // create a texture from an image path
-                texture = PIXI.Texture.fromImage("pics/bunny.png");
+                texture = PIXI.Texture.fromImage("pics/player1.png");
                 
                 // create a new Sprite using the texture
                 player1 = new player(texture,resx / 2,resy / 2);
