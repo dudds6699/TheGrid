@@ -43,6 +43,7 @@
                 up = keyboard(38),
                 right = keyboard(39),
                 down = keyboard(40);
+                start = keyboard(32);
 
                 //basic game logic
                 left.press = function(){
@@ -60,6 +61,19 @@
                 down.press = function() {
                     player1.down();
                 }            
+                
+                start.press = function(){
+                    container.removeChildren();
+                // create a new Sprite using the texture
+                    player1 = new player(texture,resx / 2,resy / 2, "Player 1");
+                    player1.start(container);
+                    state = play;
+                }
+            
+            function nonplay(){
+                //this is to avoid js errors in the console.
+                return true;
+            }
             
             
             function setup(){
@@ -69,12 +83,8 @@
                 // create a texture from an image path
                 texture = PIXI.Texture.fromImage("pics/player1.png");
                 
-                // create a new Sprite using the texture
-                player1 = new player(texture,resx / 2,resy / 2);
-                player1.setContainer(container);
-                
-                //Set the game state
-                state = play;
+                //Set the game state right now its no state
+                state = nonplay;
                 
                 animate();
             }
@@ -88,19 +98,9 @@
             function play(){
                 player1.update(container);
                 //checks if the player crashes
-                var check = player1.crash(container, resx, resy)
-                if(check){
-                    reset();
-                }
-                
+                player1.hasCrashed(container, resx, resy);
             }
-            
-            function reset(){
-                container.removeChildren();
-                console.log("called");
-                player1 = new player(texture,resx / 2,resy / 2);
-                player1.setContainer(container);
-            }
+
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>

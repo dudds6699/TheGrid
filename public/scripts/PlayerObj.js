@@ -1,4 +1,4 @@
-function player(texture,startx, starty)
+function player(texture,startx, starty, name)
 {
     this.texture = texture;
     this.obj = new PIXI.Sprite(this.texture);
@@ -9,10 +9,36 @@ function player(texture,startx, starty)
     this.obj.position.x = startx;
     this.obj.position.y = starty;
     this.velocity = 2;
+    this.crashed = false;
+    this.playerName = name;
 }
 
 player.prototype.setContainer = function(container){
     container.addChild(this.obj);
+};
+
+player.prototype.start = function(container, direction){
+    container.addChild(this.obj);
+    switch (direction) {
+        case 'up':
+            // code
+            this.up();
+            break;
+        case 'down':
+            // code
+            this.down();
+            break;
+        case 'left':
+            this.left();
+            break;
+        case 'right':
+            // code
+            this.right();
+            break;
+        default:
+            this.right();
+            // code
+    }
 };
 
 player.prototype.left = function(){
@@ -36,24 +62,26 @@ player.prototype.down = function(){
 };
 
 player.prototype.update = function(container){
-    clone = new PIXI.Sprite(texture);
     
-    //clone the object where its at now
-    clone.anchor.x = 0.5;
-    clone.anchor.y = 0.5;
-    clone.position.x = this.obj.x;
-    clone.position.y = this.obj.y;
-    
-    container.addChild(clone);
-                
-    this.obj.x += this.vx;
-    this.obj.y += this.vy;
-    
-    
-    //for(var i = 0; i<container.children.length; i++){
-        //console.log(container.children[i]);
-    //}
-    
+    if(!this.crashed){
+        clone = new PIXI.Sprite(texture);
+        //clone the object where its at now
+        clone.anchor.x = 0.5;
+        clone.anchor.y = 0.5;
+        clone.position.x = this.obj.x;
+        clone.position.y = this.obj.y;
+        
+        container.addChild(clone);
+                    
+        this.obj.x += this.vx;
+        this.obj.y += this.vy;
+    }
+};
+
+player.prototype.allstop = function(){
+    this.vx = 0;
+    this.vy = 0;
+    this.velocity = 0;
 };
 
 player.prototype.crash = function(container, limitx, limity){
@@ -66,4 +94,16 @@ player.prototype.crash = function(container, limitx, limity){
     }
     
     return check;
-}
+};
+
+player.prototype.hasCrashed = function(container, resx, resy){
+    var check = this.crash(container, resx, resy)
+                
+    if(check){
+        if(!this.crashed){
+            this.allstop();
+            this.crashed = true;
+            alert(this.playerName + " Has Crashed");
+        }
+    }
+};
