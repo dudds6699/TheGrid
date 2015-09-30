@@ -133,7 +133,7 @@
                 for(var i = 0; i < players.length; i++){
                     players[i].update(container);
                 }
-                if(gameOver(container, players)){
+                if(gameOver(container, players, resx, resy)){
                     state = nonplay;
                 }
             }

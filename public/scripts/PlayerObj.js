@@ -128,17 +128,21 @@ player.prototype.offGrid = function(container, limitx, limity){
 //this was hard to hack to gether gosh darn it
 //but the key was figuring out when to minus and when to add
 //players should be an array
-function gameOver(container, players){
+function gameOver(container, players, limx, limy){
     
     for(var i = 0; i<container.children.length; i++){
         var item = container.children[i];
-        
         for(var j = 0; j < players.length; j++){
             if(IntersectionCheck(item, players[j])){
                return stopGame(players[j], players);
             }
         }
-        
+    }
+    
+    for(var k = 0; k < players.length; k++){
+        if(players[k].offGrid(container, limx, limy)){
+            return stopGame(players[k], players);
+        }
     }
     
 }
