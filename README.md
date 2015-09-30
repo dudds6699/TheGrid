@@ -1,18 +1,8 @@
-# Awesome, you've just made a new workspace!
-Workspaces are fantastic for organizing your work. This new workspace, which lives inside the 'Workspaces' folder of your home
-directory, is a place where you can store all relevant and related files to a particular project. For example, if you
-are working on multiple projects, its nice to have them separated as follows:
--|home dir
-   -|Workspaces
-    -| Project 1
-    -| Project 2
-    -| Project 3
+# My Tron game
+Its a basic tron game.
+The project is setup in a node express application but all the relavent game related files are in the public directory.
 
-Workspaces help keep your projects organized. You can create any number of workspaces. There are no limits.
+It uses the pixi.js enginge and some sprites I cooked up.
 
-Note: A workspace folder is just a regular folder so you can create any number of files and folders inside it.
-
-As you move back and forth between your workspaces, Koding will remember everything about each workspace. This includes things
-like IDE settings, files open, Terminals open, etc.
-
-Enjoy and Happy Koding!
+Note that even though pixi.js has a canvas fall back i haven't tested it for that event. I purely wanted a 2d webgl renderer.
+Also due to the same Same-origin policy browsers have you may have to run it in a web server.
