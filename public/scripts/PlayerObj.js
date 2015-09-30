@@ -13,7 +13,7 @@ function player(textures,startx, starty, name)
     //we want it to go in a direction these two properties will help with that
     this.vx = 0;
     this.vy = 0;
-    this.velocity = 3;
+    this.velocity = 2;
     
     //some properties to help with logic
     this.crashed = false;

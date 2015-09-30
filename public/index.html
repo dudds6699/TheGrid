@@ -10,10 +10,9 @@
         <script src="scripts/pixi.js"></script>
         <script src="scripts/keyboard.js"></script>
         <script src="scripts/PlayerObj.js"></script>
-    </head>
-    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>
-            
+        $(document).ready(function(){;
             var resx = 800;
             var resy = 600;
         
@@ -25,7 +24,8 @@
             var renderer = PIXI.autoDetectRenderer(resx, resy);
              
             // add the renderer view element to the DOM
-            document.body.appendChild(renderer.view);
+            
+            $('#game').append(renderer.view);
              
              
             loader
@@ -130,9 +130,70 @@
                 player1.hasCrashed(container, resx, resy);
                 player2.hasCrashed(container, resx, resy);
             }
-
+        })
         </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <style type="text/css">
+            body {
+                background-color:black;
+                color:#00FF00;
+            }
+            
+            #game > canvas {
+                border-style:solid;
+                border-color:#00FF00;
+            }
+            
+            .tron {
+                color: #00FF00;
+                text-align:center;
+                font-size:85pt;
+                text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #fff,
+                0 0 30px #fff,
+                0 0 40px #00FFFF,
+                0 0 70px #00FFFF,
+                0 0 80px #00FFFF,
+                0 0 100px #00FFFF,
+                0 0 150px #00FFFF;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1 style="text-align:center" class="tron">
+                        The Grid
+                    </h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2" id="game">
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2 style="text-align:center">
+                        Instructions
+                    </h2>
+                </div>
+                 <div class="col-sm-4" style="text-align:center">
+                    Player 1 Uses The Arrow keys
+                </div>
+                <div class="col-sm-4" style="text-align:center">
+                    use the Space bar to start
+                </div>
+                <div class="col-sm-4" style="text-align:center">
+                    Player 2 uses the W, A, S, D keys
+                </div>
+            </div>
+        </div>
+        
+        
+        
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     </body>
 </html>
