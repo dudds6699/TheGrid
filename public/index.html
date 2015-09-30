@@ -34,6 +34,7 @@
              
             var player1;
             var player2;
+            var players;
             var state;
             var texture1;
             var texture2;
@@ -76,7 +77,13 @@
                     
                     player1.start(container);
                     player2.start(container, "left");
+                    players = [player1, player2];
                     state = play;
+                }
+                
+                enter.press = function () {
+                    pauseGame([player1]);
+                    state = nonplay;
                 }
                 
                 w.press = function(){
@@ -123,11 +130,12 @@
             }
                 
             function play(){
-                player1.update(container);
-                player2.update(container);
-                //checks if the player crashes
-                player1.hasCrashed(container, resx, resy);
-                player2.hasCrashed(container, resx, resy);
+                for(var i = 0; i < players.length; i++){
+                    players[i].update(container);
+                }
+                if(gameOver(container, players)){
+                    state = nonplay;
+                }
             }
         })
         </script>

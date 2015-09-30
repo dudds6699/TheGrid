@@ -28,6 +28,7 @@ function player(textures,startx, starty, name)
     //used for help in making calculations some of the futureexy code will probably get exsized
     //once i have a chance to make this with socket.io
     this.minus = true;
+    this.killed = false;
 
 }
 
@@ -38,25 +39,20 @@ player.prototype.start = function(container, direction){
         case 'up':
             // code
             this.up();
-            this.futurexy = new PIXI.Point(this.obj.x, this.obj.y - this.offset);
             break;
         case 'down':
             // code
             this.down();
-            this.futurexy = new PIXI.Point(this.obj.x, this.obj.y + this.offset);
             break;
         case 'left':
             this.left();
-            this.futurexy = new PIXI.Point(this.obj.x - this.offset , this.obj.y);
             break;
         case 'right':
             // code
             this.right();
-            this.futurexy = new PIXI.Point(this.obj.x  + this.offset , this.obj.y);
             break;
         default:
             this.right();
-            this.futurexy = new PIXI.Point(this.obj.x  + this.offset , this.obj.y);
             // code
     }
 };
@@ -128,70 +124,77 @@ player.prototype.offGrid = function(container, limitx, limity){
     return check;
 };
 
+
 //this was hard to hack to gether gosh darn it
 //but the key was figuring out when to minus and when to add
-player.prototype.intersects = function(container){
+//players should be an array
+function gameOver(container, players){
+    
     for(var i = 0; i<container.children.length; i++){
         var item = container.children[i];
         
-        var xdist = 0;
-        if(this.vx !== 0){
-            if(this.minus){
-                xdist = item.position.x - (this.obj.position.x - this.offset);
-            }else{
-                xdist = item.position.x - (this.obj.position.x + this.offset);
+        for(var j = 0; j < players.length; j++){
+            if(IntersectionCheck(item, players[j])){
+               return stopGame(players[j], players);
             }
-            
-        }else{
-            xdist = item.position.x - this.obj.position.x
         }
         
-        if(xdist > -item.width/2 && xdist < item.width/2)
-		{
-            var ydist = 0;
-            if(this.vy !== 0){
-                if(this.minus){
-                    ydist = item.position.y - (this.obj.position.y - this.offset);
-                }else{
-                    ydist = item.position.y - (this.obj.position.y + this.offset);
-                }
-                
-            }else{
-                ydist = item.position.y - this.obj.position.y;
+    }
+    
+}
+
+function stopGame(killedPlayer, players){
+    
+    for(var j = 0; j < players.length; j++){
+        players[j].allstop();
+    }
+    
+    if(!killedPlayer.crashed){
+        alert(killedPlayer.playerName + " Has lost");
+        killedPlayer.crashed = true;
+        return true;
+    }
+}
+
+function pauseGame(players){
+    for(var j = 0; j < players.length; j++){
+        players[j].allstop();
+    }
+}
+
+
+function IntersectionCheck(item, playerObj) {
+    var xdist = 0;
+    
+    if (playerObj.vx !== 0) {
+        if (playerObj.minus) {
+            xdist = item.position.x - (playerObj.obj.position.x - playerObj.offset);
+        } else {
+            xdist = item.position.x - (playerObj.obj.position.x + playerObj.offset);
+        }
+    } else {
+        xdist = item.position.x - playerObj.obj.position.x
+    }
+
+    if (xdist > -item.width / 2 && xdist < item.width / 2) {
+        var ydist = 0;
+        if (playerObj.vy !== 0) {
+            if (playerObj.minus) {
+                ydist = item.position.y - (playerObj.obj.position.y - playerObj.offset);
+            } else {
+                ydist = item.position.y - (playerObj.obj.position.y + playerObj.offset);
             }
 
-           
-            if(ydist > -item.height/2 && ydist < item.height/2)
-			{
-                return true;
-			}
-		}
+        } else {
+            ydist = item.position.y - playerObj.obj.position.y;
+        }
+
+
+        if (ydist > -item.height / 2 && ydist < item.height / 2) {
+            return true;
+        }
+        
     }
+    
     return false;
-};
-
-
-//if it crashed then let the player know
-player.prototype.hasCrashed = function(container, resx, resy){
-    var check = this.offGrid(container, resx, resy);
-                    
-    if(check){
-        if(!this.crashed){
-            this.allstop();
-            this.crashed = true;
-            alert(this.playerName + " Has Went Off Grid");
-        }
-    }
-    
-    check = this.intersects(container);
-    
-        if(check){
-        if(!this.crashed){
-            this.allstop();
-            this.crashed = true;
-            alert(this.playerName + " Has Crashed");
-        }
-    }
-    
-    return check;
-};
+}
