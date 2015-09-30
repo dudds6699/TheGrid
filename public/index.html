@@ -44,6 +44,7 @@
                 right = keyboard(39),
                 down = keyboard(40);
                 start = keyboard(32);
+                enter = keyboard(13);
 
                 //basic game logic
                 left.press = function(){
@@ -68,6 +69,15 @@
                     player1 = new player(texture,resx / 2,resy / 2, "Player 1");
                     player1.start(container);
                     state = play;
+                }
+                
+                enter.press = function() {
+                    //for debuging
+                    for(var i = 0; i<container.children.length; i++){
+                        console.log("x:" + container.children[i].x + ", y:"+ container.children[i].y);
+                        console.log("height:" + container.children[i].height + " ,width:" +container.children[i].width)
+                        console.log("px:" + player1.futurexy.x + " ,y:" + player1.futurexy.y);
+                    }
                 }
             
             function nonplay(){
