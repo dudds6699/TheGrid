@@ -34,19 +34,25 @@
                 .load(setup);
              
             var player1;
+            var player2;
             var state;
-            var texture;
+            var texture1;
+            var texture2;
             var continueAn = true;
             
             //Capture the keyboard arrow keys
             var left = keyboard(37),
                 up = keyboard(38),
                 right = keyboard(39),
-                down = keyboard(40);
-                start = keyboard(32);
-                enter = keyboard(13);
-
-                //basic game logic
+                down = keyboard(40),
+                start = keyboard(32),
+                enter = keyboard(13),
+                w = keyboard(87),
+                a = keyboard(65),
+                s = keyboard(83),
+                d = keyboard(68);
+                
+                //player1 keys
                 left.press = function(){
                     player1.left();
                 }
@@ -65,20 +71,31 @@
                 
                 start.press = function(){
                     container.removeChildren();
-                // create a new Sprite using the texture
-                    player1 = new player(texture,resx / 2,resy / 2, "Player 1");
+                    // create a new Sprite using the texture
+                    player1 = new player(texture1,resx / 2,resy / 2, "Player 1");
+                    player2 = new player(texture2,(resx / 2) -30,resy / 2, "Player 2");
+                    
                     player1.start(container);
+                    player2.start(container, "left");
                     state = play;
                 }
                 
-                enter.press = function() {
-                    //for debuging
-                    for(var i = 0; i<container.children.length; i++){
-                        console.log("x:" + container.children[i].x + ", y:"+ container.children[i].y);
-                        console.log("height:" + container.children[i].height + " ,width:" +container.children[i].width)
-                        console.log("px:" + player1.futurexy.x + " ,y:" + player1.futurexy.y);
-                    }
+                w.press = function(){
+                    player2.up();
                 }
+                
+                a.press = function(){
+                     player2.left();
+                }
+                
+                s.press = function(){
+                    player2.down();
+                }
+                
+                d.press = function(){
+                     player2.right();
+                }
+                
             
             function nonplay(){
                 //this is to avoid js errors in the console.
@@ -91,7 +108,8 @@
                 requestAnimationFrame( animate );
                 
                 // create a texture from an image path
-                texture = PIXI.Texture.fromImage("pics/player1.png");
+                texture1 = PIXI.Texture.fromImage("pics/player1.png");
+                texture2 = PIXI.Texture.fromImage("pics/player2.png");
                 
                 //Set the game state right now its no state
                 state = nonplay;
@@ -107,8 +125,10 @@
                 
             function play(){
                 player1.update(container);
+                player2.update(container);
                 //checks if the player crashes
                 player1.hasCrashed(container, resx, resy);
+                player2.hasCrashed(container, resx, resy);
             }
 
         </script>

@@ -1,7 +1,7 @@
-function player(texture,startx, starty, name)
+function player(textures,startx, starty, name)
 {
     //for the object when cloning
-    this.texture = texture;
+    this.texture = textures;
     
     //sets up the object for rendering in pixi
     this.obj = new PIXI.Sprite(this.texture);
@@ -13,7 +13,7 @@ function player(texture,startx, starty, name)
     //we want it to go in a direction these two properties will help with that
     this.vx = 0;
     this.vy = 0;
-    this.velocity = 2;
+    this.velocity = 3;
     
     //some properties to help with logic
     this.crashed = false;
@@ -85,7 +85,7 @@ player.prototype.down = function(){
 player.prototype.update = function(container){
     
     if(!this.crashed){
-        clone = new PIXI.Sprite(texture);
+        clone = new PIXI.Sprite(this.texture);
         //clone the object where its at now
         clone.anchor.x = 0.5;
         clone.anchor.y = 0.5;
