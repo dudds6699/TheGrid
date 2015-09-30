@@ -25,10 +25,13 @@ function player(textures,startx, starty, name)
     
     //this will be instantiated but will change
     this.futurexy = new PIXI.Point(startx,starty);
+    //used for help in making calculations some of the futureexy code will probably get exsized
+    //once i have a chance to make this with socket.io
     this.minus = true;
 
 }
 
+//handles the begining of the game
 player.prototype.start = function(container, direction){
     container.addChild(this.obj);
     switch (direction) {
@@ -83,7 +86,8 @@ player.prototype.down = function(){
 };
 
 player.prototype.update = function(container){
-    
+    //the way this works it creates a duplicate sprite of where you where
+    //hence we calculate a hit based on where you are going to be.
     if(!this.crashed){
         clone = new PIXI.Sprite(this.texture);
         //clone the object where its at now
@@ -111,7 +115,7 @@ player.prototype.allstop = function(){
     this.velocity = 0;
 };
 
-//I going to call this offGrid
+//I going to call this offGrid, exceeds the bounds of the game
 player.prototype.offGrid = function(container, limitx, limity){
     var check = false;
     if(this.futurexy.x > limitx + this.offset || this.futurexy.x < 0){
@@ -124,7 +128,8 @@ player.prototype.offGrid = function(container, limitx, limity){
     return check;
 };
 
-
+//this was hard to hack to gether gosh darn it
+//but the key was figuring out when to minus and when to add
 player.prototype.intersects = function(container){
     for(var i = 0; i<container.children.length; i++){
         var item = container.children[i];
@@ -164,6 +169,8 @@ player.prototype.intersects = function(container){
     }
     return false;
 };
+
+
 //if it crashed then let the player know
 player.prototype.hasCrashed = function(container, resx, resy){
     var check = this.offGrid(container, resx, resy);
