@@ -85,24 +85,33 @@ player.prototype.update = function(container){
     //the way this works it creates a duplicate sprite of where you where
     //hence we calculate a hit based on where you are going to be.
     if(!this.crashed){
-        clone = new PIXI.Sprite(this.texture);
-        //clone the object where its at now
-        clone.anchor.x = 0.5;
-        clone.anchor.y = 0.5;
-        clone.position.x = this.obj.x;
-        clone.position.y = this.obj.y;
-        
-        container.addChild(clone);
-                    
-        this.obj.x += this.vx;
-        this.obj.y += this.vy;
-        
-        if(this.vx !== 0){
-            this.futurexy.x += this.vx;
-        }else if(this.vy !== 0){
-            this.futurexy.y  += this.vy;
-        }
+
+        //this.clone(container);
+        this.move();
+
     }
+};
+
+player.prototype.move = function(){
+    this.obj.x += this.vx;
+    this.obj.y += this.vy;
+        
+    if(this.vx !== 0){
+        this.futurexy.x += this.vx;
+    }else if(this.vy !== 0){
+        this.futurexy.y  += this.vy;
+    }
+};
+
+player.prototype.clone = function(container){
+    clone = new PIXI.Sprite(this.texture);
+    //clone the object where its at now
+    clone.anchor.x = 0.5;
+    clone.anchor.y = 0.5;
+    clone.position.x = this.obj.x;
+    clone.position.y = this.obj.y;
+        
+    container.addChild(clone);
 };
 
 player.prototype.allstop = function(){
