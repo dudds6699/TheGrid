@@ -58,27 +58,35 @@ player.prototype.start = function(container, direction){
 };
 
 player.prototype.left = function(){
-    this.vx = this.velocity * -1;
-    this.minus = true;
-    this.vy = 0;
+    if(this.vx <= 0){
+        this.vx = this.velocity * -1;
+        this.minus = true;
+        this.vy = 0;
+    }
 };
 
 player.prototype.right = function(){
-    this.vx = this.velocity;
-    this.minus = false;
-    this.vy = 0;     
+    if(this.vx >= 0){
+        this.vx = this.velocity;
+        this.minus = false;
+        this.vy = 0;    
+    }
 };
 
 player.prototype.up = function(){
-    this.vx = 0;
-    this.vy = this.velocity * -1;   
-    this.minus = true;
+    if(this.vy <= 0){
+        this.vx = 0;
+        this.vy = this.velocity * -1;   
+        this.minus = true;
+    }
 };
 
 player.prototype.down = function(){
-    this.vx = 0;
-    this.vy = this.velocity;
-    this.minus = false;
+    if(this.vy >= 0){
+        this.vx = 0;
+        this.vy = this.velocity;
+        this.minus = false;
+    }
 };
 
 player.prototype.update = function(container){
@@ -91,6 +99,14 @@ player.prototype.update = function(container){
 
     }
 };
+
+player.prototype.rectangleDraw = function(container) {
+        var rect = new PIXI.Graphics();
+                
+        rect.lineStyle(5, 0xFF0000);
+        rect.drawRect(0, 0, 300, 6);
+        container.addChild(rect);
+}
 
 player.prototype.move = function(){
     this.obj.x += this.vx;
