@@ -76,8 +76,8 @@
                     player2 = new player(texture2,(resx / 2) -30,resy / 2, "Player 2");
                     
                     player1.start(container);
-                    //player2.start(container, "left");
-                    players = [player1];
+                    player2.start(container, "left");
+                    players = [player1,player2];
                     state = play;
                 }
                 
@@ -133,7 +133,8 @@
                 for(var i = 0; i < players.length; i++){
                     players[i].update(container);
                 }
-                if(gameOver(player1.rectangles.concat(player2.rectangles), players, resx, resy)){
+                
+                if(gameOver(players, resx, resy)){
                     state = nonplay;
                     
                 }

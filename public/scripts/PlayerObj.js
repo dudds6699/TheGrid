@@ -23,8 +23,9 @@ RectangleHelper.prototype.draw = function(){
     if(this.created){
         this.rect.clear();
         //line style will be useless later but right now lets keep it red.
-        this.rect.lineStyle(2, 0xFF0000);
+        this.rect.lineStyle(1, 0xFF0000);
         this.rect.drawRect(this.x, this.y, this.w, this.h);
+        this.rect.alpha = 0;
     }
     
 };
@@ -47,7 +48,7 @@ function player(textures,startx, starty, name)
     //we want it to go in a direction these two properties will help with that
     this.vx = 0;
     this.vy = 0;
-    this.velocity = 2;
+    this.velocity = 3;
     
     
     
@@ -59,7 +60,7 @@ function player(textures,startx, starty, name)
     //25 / 2 = 12.5 but we will round up
     this.offset = 6;
     
-    this.pixsize = 6;
+    this.pixsize = 3;
     
     //this will be instantiated but will change
     this.futurexy = new PIXI.Point(startx,starty);
@@ -85,17 +86,13 @@ function player(textures,startx, starty, name)
 player.prototype.addRectangle = function(){
     //left and right
     //i'm tired screw pixel perfect hit detection
-    
-    
-    var newx = this.obj.position.x;
-    var newy = this.obj.position.y;
-    this.currentRectangle = new RectangleHelper(newx, newy, this.pixsize, 0, 0);
-   
+    this.currentRectangle = new RectangleHelper(this.futurexy.x, this.futurexy.y, this.pixsize, 0, 0);
+    this.rectangles.push(this.currentRectangle);    
 };
 
 //handles the begining of the game
 player.prototype.start = function(container, direction){
-    container.addChild(this.obj);
+    
     this.started = true;
     switch (direction) {
         case 'up':
@@ -117,6 +114,8 @@ player.prototype.start = function(container, direction){
             this.right(container);
             // code
     }
+    
+    container.addChild(this.obj);
 };
 
 player.prototype.left = function(container){
@@ -128,7 +127,8 @@ player.prototype.left = function(container){
         this.currentRectangle.h = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        
+        this.obj.position.x = this.futurexy.x - this.offset /2;
+        this.obj.position.y = this.futurexy.y + this.pixsize /2;
     }
 };
 
@@ -141,7 +141,8 @@ player.prototype.right = function(container){
         this.currentRectangle.h = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        
+        this.obj.position.x = this.futurexy.x + this.offset /2;
+        this.obj.position.y = this.futurexy.y + this.pixsize /2;
     }
 };
 
@@ -154,6 +155,8 @@ player.prototype.up = function(container){
         this.currentRectangle.w = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
+        this.obj.position.x = this.futurexy.x + this.pixsize /2;
+        this.obj.position.y = this.futurexy.y - this.offset /2;        
     }
 };
 
@@ -161,11 +164,13 @@ player.prototype.down = function(container){
     if(this.vy >= 0){
         this.vx = 0;
         this.vy = this.velocity;
-        this.minus = false;
+        this.minus = false;        
         this.addRectangle();
         this.currentRectangle.w = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
+        this.obj.position.x = this.futurexy.x + this.pixsize /2;
+        this.obj.position.y = this.futurexy.y + this.offset /2;        
     }
 };
 
@@ -199,8 +204,8 @@ player.prototype.clone = function(container){
     //clone the object where its at now
     clone.anchor.x = 0.5;
     clone.anchor.y = 0.5;
-    clone.position.x = this.obj.x;
-    clone.position.y = this.obj.y;
+    clone.position.x = this.obj.position.x;
+    clone.position.y = this.obj.position.y;
         
     container.addChild(clone);
 };
@@ -225,20 +230,31 @@ player.prototype.offGrid = function(limitx, limity){
 };
 
 
+
+
 //this was hard to hack to gether gosh darn it
 //but the key was figuring out when to minus and when to add
 //players should be an array
-function gameOver(hitareas, players, limx, limy){
+function gameOver(players, limx, limy){
+    //itterate through all the players
+    var hitareas = [];
+    for(var j = 0; j< players.length; j++){
+        hitareas = hitareas.concat(players[j].rectangles);
+    }
     
-    for(var i = 0; i< hitareas.length; i++){
-        var item = hitareas[i];
-        for(var j = 0; j < players.length; j++){
-            if(IntersectionCheck(item, players[j])){
-               return stopGame(players[j], players);
+    
+    //check if the player IntersectionCheck
+    for(var p = 0; p < players.length; p ++){
+        play = players[p];
+        for(var i = 0; i < hitareas.length; i++){
+            var item = hitareas[i];
+            if(IntersectionCheck(item, play)){
+                return stopGame(play, players);
             }
         }
     }
     
+
     for(var k = 0; k < players.length; k++){
         if(players[k].offGrid(limx, limy)){
             return stopGame(players[k], players);
@@ -247,28 +263,6 @@ function gameOver(hitareas, players, limx, limy){
     
 }
 
-/*
-
-function gameOver(container, players, limx, limy){
-    
-    for(var i = 0; i<container.children.length; i++){
-        var item = container.children[i];
-        for(var j = 0; j < players.length; j++){
-            if(IntersectionCheck(item, players[j])){
-               return stopGame(players[j], players);
-            }
-        }
-    }
-    
-    for(var k = 0; k < players.length; k++){
-        if(players[k].offGrid(container, limx, limy)){
-            return stopGame(players[k], players);
-        }
-    }
-    
-}
-
-*/
 
 function stopGame(killedPlayer, players){
     
@@ -291,28 +285,41 @@ function pauseGame(players){
 
 
 function IntersectionCheck(item, playerObj) {
-    var xdist = 0;
+    
     //we don't play as a pixel we play as a box so lets get the latest box
-
-
-	var pickup = item.rect.getBounds();
-
-    xdist = pickup.x - playerObj.obj.position.x;
-
-	console.log("x:" + playerObj.obj.position.x + " y:" + playerObj.obj.position.x);
-	console.log(pickup);
+	var checkrect = item.rect.getBounds();
+	var objbounds = playerObj.obj.getBounds();
 	
-	if(xdist > -pickup.width/2 && xdist < pickup.width/2)
-	{
-	    console.log("x:" + playerObj.obj.position.x + " y:" + playerObj.obj.position.x);
-	    console.log(pickup);
-		var ydist = pickup.y - playerObj.obj.position.y;
-		
-		if(ydist > -pickup.height/2 && ydist < pickup.height/2)
-		{
-				return true;
-		}
+	var point = new PIXI.Point(objbounds.x + objbounds.width /2, objbounds.y + objbounds.height/2);
+	if(playerObj.vx > 0){
+        point.x  = point.x + playerObj.offset;
+	}
+    else if(playerObj.vx < 0){
+        point.x  = point.x - playerObj.offset;
+	}
+	
+	if(playerObj.vy > 0){
+        point.y = point.y + playerObj.offset;
+	}else if(playerObj.vy < 0){
+        point.y = point.y - playerObj.offset;
+	}
+	
+	
+	return rectangleContainsPoint(checkrect,point);
+
+}
+
+function rectangleContainsPoint(rect, point) {
+	if (rect.width <= 0 || rect.height <= 0) {
+		return false;
 	}
 
+    if(point.x >= rect.x && point.x <= (rect.x + rect.width)){
+        if(point.y >= rect.y && point.y <= (rect.y + rect.height)){
+            return true;
+        }
+    }
+ 
+ 
 }
 
