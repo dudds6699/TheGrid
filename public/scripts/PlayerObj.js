@@ -48,10 +48,10 @@ function player(textures,startx, starty, name)
     //we want it to go in a direction these two properties will help with that
     this.vx = 0;
     this.vy = 0;
-    this.velocity = 3;
+    this.velocity = 2;
     
     
-    
+    this.pointCheck = new PIXI.Point(startx,starty);
     //some properties to help with logic
     this.crashed = false;
     this.playerName = name;
@@ -127,8 +127,8 @@ player.prototype.left = function(container){
         this.currentRectangle.h = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        this.obj.position.x = this.futurexy.x - this.offset /2;
-        this.obj.position.y = this.futurexy.y + this.pixsize /2;
+        this.pointCheck.x = this.futurexy.x - this.offset /2;
+        this.pointCheck.y = this.futurexy.y + this.pixsize /2;
     }
 };
 
@@ -141,8 +141,8 @@ player.prototype.right = function(container){
         this.currentRectangle.h = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        this.obj.position.x = this.futurexy.x + this.offset /2;
-        this.obj.position.y = this.futurexy.y + this.pixsize /2;
+        this.pointCheck.x = this.futurexy.x + this.offset /2;
+        this.pointCheck.y = this.futurexy.y + this.pixsize /2;
     }
 };
 
@@ -155,8 +155,8 @@ player.prototype.up = function(container){
         this.currentRectangle.w = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        this.obj.position.x = this.futurexy.x + this.pixsize /2;
-        this.obj.position.y = this.futurexy.y - this.offset /2;        
+        this.pointCheck.x = this.futurexy.x + this.pixsize /2;
+        this.pointCheck.y = this.futurexy.y - this.offset /2;        
     }
 };
 
@@ -169,8 +169,8 @@ player.prototype.down = function(container){
         this.currentRectangle.w = this.pixsize;
         this.currentRectangle.addToField(container);
         this.currentRectangle.draw();
-        this.obj.position.x = this.futurexy.x + this.pixsize /2;
-        this.obj.position.y = this.futurexy.y + this.offset /2;        
+        this.pointCheck.x = this.futurexy.x + this.pixsize /2;
+        this.pointCheck.y = this.futurexy.y + this.offset /2;        
     }
 };
 
@@ -189,6 +189,8 @@ player.prototype.update = function(container){
 player.prototype.move = function(){
     this.obj.x += this.vx;
     this.obj.y += this.vy;
+    this.pointCheck.x += this.vx;
+    this.pointCheck.y += this.vy;
         
     if(this.vx !== 0){
         this.futurexy.x += this.vx;
@@ -288,9 +290,10 @@ function IntersectionCheck(item, playerObj) {
     
     //we don't play as a pixel we play as a box so lets get the latest box
 	var checkrect = item.rect.getBounds();
-	var objbounds = playerObj.obj.getBounds();
+	//var objbounds = playerObj.obj.getBounds();
 	
-	var point = new PIXI.Point(objbounds.x + objbounds.width /2, objbounds.y + objbounds.height/2);
+	var point = playerObj.pointCheck;
+	/*
 	if(playerObj.vx > 0){
         point.x  = point.x + playerObj.offset;
 	}
@@ -303,7 +306,7 @@ function IntersectionCheck(item, playerObj) {
 	}else if(playerObj.vy < 0){
         point.y = point.y - playerObj.offset;
 	}
-	
+	*/
 	
 	return rectangleContainsPoint(checkrect,point);
 
