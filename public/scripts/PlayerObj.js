@@ -1,9 +1,43 @@
+function RectangleHelper(x, y, size,  w, h, up){
+    //rectangles first xy is the top left corner which is 0 by 0
+    this.x = x;
+    this.y = y;
+
+    this.w = w;
+    this.h = h;
+    this.created = false;
+    //the object of the Graphics
+    this.rect = null;
+    
+}
+
+RectangleHelper.prototype.addToField = function(container){
+    this.rect = new PIXI.Graphics();
+    container.addChild(this.rect);
+    this.created = true;
+};
+
+
+RectangleHelper.prototype.draw = function(){
+    
+    if(this.created){
+        this.rect.clear();
+        //line style will be useless later but right now lets keep it red.
+        this.rect.lineStyle(2, 0xFF0000);
+        this.rect.drawRect(this.x, this.y, this.w, this.h);
+    }
+    
+};
+
 function player(textures,startx, starty, name)
 {
     //for the object when cloning
     this.texture = textures;
     
     //sets up the object for rendering in pixi
+    this.coordx = startx;
+    this.coordy = starty;
+    
     this.obj = new PIXI.Sprite(this.texture);
     this.obj.anchor.x = 0.5;
     this.obj.anchor.y = 0.5;
@@ -15,13 +49,17 @@ function player(textures,startx, starty, name)
     this.vy = 0;
     this.velocity = 2;
     
+    
+    
     //some properties to help with logic
     this.crashed = false;
     this.playerName = name;
     
     //for our hit box our sprites are 25pix by 25pix and the origin should be in the center
     //25 / 2 = 12.5 but we will round up
-    this.offset = 6;
+    this.offset = 12;
+    
+    this.pixsize = 6;
     
     //this will be instantiated but will change
     this.futurexy = new PIXI.Point(startx,starty);
@@ -29,8 +67,26 @@ function player(textures,startx, starty, name)
     //once i have a chance to make this with socket.io
     this.minus = true;
     this.killed = false;
+    
+    this.currentRectangle = -1;
+    
+    
+    
+    this.rectangles = [];
+    //this.addRectangle();
+ 
+    
 
 }
+
+player.prototype.addRectangle = function(){
+    //left and right
+    //i'm tired screw pixel perfect hit detection
+    var newx = this.obj.position.x;
+    var newy = this.obj.position.y;
+    this.rectangles.push(new RectangleHelper(newx, newy, this.pixsize, 0, 0));
+    this.currentRectangle++;
+};
 
 //handles the begining of the game
 player.prototype.start = function(container, direction){
@@ -38,54 +94,71 @@ player.prototype.start = function(container, direction){
     switch (direction) {
         case 'up':
             // code
-            this.up();
+            this.up(container);
             break;
         case 'down':
             // code
-            this.down();
+            this.down(container);
             break;
         case 'left':
-            this.left();
+            this.left(container);
             break;
         case 'right':
             // code
-            this.right();
+            this.right(container);
             break;
         default:
-            this.right();
+            this.right(container);
             // code
     }
 };
 
-player.prototype.left = function(){
+player.prototype.left = function(container){
     if(this.vx <= 0){
         this.vx = this.velocity * -1;
         this.minus = true;
         this.vy = 0;
+        
+        this.addRectangle();
+        this.rectangles[this.currentRectangle].h = this.pixsize;
+        this.rectangles[this.currentRectangle].addToField(container);
+        this.rectangles[this.currentRectangle].draw();
     }
 };
 
-player.prototype.right = function(){
+player.prototype.right = function(container){
     if(this.vx >= 0){
         this.vx = this.velocity;
         this.minus = false;
-        this.vy = 0;    
+        this.vy = 0;
+        this.addRectangle();
+        this.rectangles[this.currentRectangle].h = this.pixsize;
+        this.rectangles[this.currentRectangle].addToField(container);
+        this.rectangles[this.currentRectangle].draw();
     }
 };
 
-player.prototype.up = function(){
+player.prototype.up = function(container){
     if(this.vy <= 0){
         this.vx = 0;
         this.vy = this.velocity * -1;   
         this.minus = true;
+        this.addRectangle();
+        this.rectangles[this.currentRectangle].w = this.pixsize;
+        this.rectangles[this.currentRectangle].addToField(container);
+        this.rectangles[this.currentRectangle].draw();
     }
 };
 
-player.prototype.down = function(){
+player.prototype.down = function(container){
     if(this.vy >= 0){
         this.vx = 0;
         this.vy = this.velocity;
         this.minus = false;
+        this.addRectangle();
+        this.rectangles[this.currentRectangle].w = this.pixsize;
+        this.rectangles[this.currentRectangle].addToField(container);
+        this.rectangles[this.currentRectangle].draw();
     }
 };
 
@@ -94,19 +167,12 @@ player.prototype.update = function(container){
     //hence we calculate a hit based on where you are going to be.
     if(!this.crashed){
 
-        //this.clone(container);
+        this.clone(container);
         this.move();
+        this.rectangles[this.currentRectangle].draw();
 
     }
 };
-
-player.prototype.rectangleDraw = function(container) {
-        var rect = new PIXI.Graphics();
-                
-        rect.lineStyle(5, 0xFF0000);
-        rect.drawRect(0, 0, 300, 6);
-        container.addChild(rect);
-}
 
 player.prototype.move = function(){
     this.obj.x += this.vx;
@@ -114,8 +180,10 @@ player.prototype.move = function(){
         
     if(this.vx !== 0){
         this.futurexy.x += this.vx;
+        this.rectangles[this.currentRectangle].w += this.vx;
     }else if(this.vy !== 0){
         this.futurexy.y  += this.vy;
+        this.rectangles[this.currentRectangle].h += this.vy;
     }
 };
 
@@ -202,7 +270,7 @@ function IntersectionCheck(item, playerObj) {
             xdist = item.position.x - (playerObj.obj.position.x + playerObj.offset);
         }
     } else {
-        xdist = item.position.x - playerObj.obj.position.x
+        xdist = item.position.x - playerObj.obj.position.x;
     }
 
     if (xdist > -item.width / 2 && xdist < item.width / 2) {

@@ -54,19 +54,19 @@
                 
                 //player1 keys
                 left.press = function(){
-                    player1.left();
+                    player1.left(container);
                 }
                 
                 up.press = function() {
-                    player1.up();
+                    player1.up(container);
                 }
                 
                 right.press = function(){
-                    player1.right();                  
+                    player1.right(container);                  
                 }
                 
                 down.press = function() {
-                    player1.down();
+                    player1.down(container);
                 }            
                 
                 start.press = function(){
@@ -87,19 +87,19 @@
                 }
                 
                 w.press = function(){
-                    player2.up();
+                    player2.up(container);
                 }
                 
                 a.press = function(){
-                     player2.left();
+                     player2.left(container);
                 }
                 
                 s.press = function(){
-                    player2.down();
+                    player2.down(container);
                 }
                 
                 d.press = function(){
-                     player2.right();
+                     player2.right(container);
                 }
                 
             
@@ -135,6 +135,7 @@
                 }
                 if(gameOver(container, players, resx, resy)){
                     state = nonplay;
+                    
                 }
             }
         })
